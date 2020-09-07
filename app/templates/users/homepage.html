@@ -1,0 +1,196 @@
+{% extends "layout.html" %}
+{%block title%}
+{{rows.name}}
+{% endblock title %}
+{% block main%}
+<div class="container-fluid">
+  
+        <div class=" text-center">
+            <div class="form-group mt-5 text-white">
+                <div class="card-content m-3">
+                    <div class="row ">
+                    <img class="col-sm-1 ml-5 text-center mt-4 rounded-circle text-center profile"
+                         src="{{image_file}}" alt="profile" >
+                    
+                <!-- action="/posts" method="POST" -->
+                <form class="post ml-5 col-sm-9">
+
+                    <div class="form-group input_msg_write  mt-3">
+                        <div class="input-group">
+                            <textarea class="form-control postin" aria-label="With textarea" name="post"
+                                style="resize: none;"  user_id ="{{rows.id}}"></textarea>
+                        </div>
+                        <div class="clearfix">
+                            <button id="post" class="btn btn-success mt-2 pull-right" type="submit"
+                                name="message">Post</button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+                </div>
+            </div>
+        </div>
+        {% for post in posts%}
+            <div  class="form-group card m-2 text-white " style="background-color:black">
+                <section class="post-heading">
+                   
+                    <div class="media m-2 ">
+                        <div class="media-left ">
+                            <a href="#">
+                                {% for user in users %}
+                                    
+                                    {% if post.user_id == user.id %}
+                                    
+                                        <img class="ml-3 media-object photo-profile rounded-circle"
+                                            src="/static/images/{{user.user_profile}}" width="40"
+                                            height="40" alt="...">
+                                    {% endif %}
+                                {% endfor %}
+                            </a>
+                        </div>
+                        <div class="media-body" >
+                            <div class="row">
+                                {% for user in users %}
+                                {% if post.user_id == user.id %}
+                                <a href="{{url_for('user_home',username=user.username)}}" class="anchor-username col-sm-9">
+                                    <h4 class="media-heading m-2">{{post.user.name}}</h4>
+
+                                </a>
+                                {% endif %}
+                                {% endfor %}
+
+                                <a class="nav-link" href="#" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="m-2 fa fa-ellipsis-h"></i>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="allbtn deletebtn dropdown-item "
+                                        post_id = "{{post.id}}">delete post <i
+                                            class="fa fa-trash pl-2 text-danger"></i></a>
+                                    <a class="allbtn dropdown-item" type="button" data-toggle="modal"
+                                        data-target="#postModal" href="{{url_for('update_post',id=post.id)}}"
+                                        data-post="{{post.post}}">update
+                                        post<i class="fa fa-edit pl-2 text-info"></i></a>
+
+                                </div>
+                            </div>
+                            <div class="modal fade" id="postModal" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <form action="{{url_for('update_post',id=post.id)}}" method="POST">
+                                            <div class="modal-body">
+
+                                                <div class="form-group">
+                                                    <textarea class="form-control" id="message-text"
+                                                        name="post"></textarea>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="time_date ml-3">Posted on:
+                                {{post.posted_on.strftime("%Y-%m-%d %H:%M:%S")}}</small>
+                        </div>
+                    </div>
+                        
+                </section>
+
+                <div>
+
+                    <div class="card-body pl-2">
+                        <section class="post-body " style="font-family:'Arizonia', Helvetica, sans-serif;">
+                            <p class="card-text" id="display" >{{post.post}}</p>
+                        </section>
+                        <section class="post-footer">
+                            <hr>
+                            <div class="post-footer-option container">
+                                <ul class="list-unstyled m-2">
+                                    <li class=""><a class="allbtn likebtn"  post_id = "{{post.id}}" style="font-size: small;"><i
+                                                class="fa fa-thumbs-up" style="font-size: small;"
+                                                aria-hidden="true"></i> Like</a> <span id="count{{post.id}}">
+                                            {{post.likes}}</span></li>
+                                    <li><a style="font-size: small;"><i class="fa fa-comment"
+                                                style="font-size: small;" ></i> Comments<span class="count">
+                                            {{post.comments}}</span></a></li>
+                                </ul>
+                            </div>
+
+                            <hr>
+                            <div class="form-group mt-2">
+                                
+                                <form post_id="{{post.id}}"  class="reply_btn" method="POST">
+
+                                    <div class="form-group input_msg_write  mt-3">
+                                        <div class="input-group" >
+                                            <textarea class="replyin form-control mx-3 my-2 reply" 
+                                                aria-label="With textarea"
+                                                name="reply" rows="1" 
+                                                post_id="{{post.id}}"
+                                                style="word-wrap: break-word;resize:none; border-radius:50px"></textarea>
+                                        </div>
+                                        <div class="clearfix">
+                                            <button 
+                                                class=" btn btn-sm btn-success  mt-2 mr-2 pull-right"
+                                                type="submit" name="reply">Reply</button>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+                            
+                            <hr class="m-2">
+                            {% for reply in replies_all%}
+                            <div class="bg" style="background-color:#F0F2F5;">
+                                <div class="media-body bg-secondary">
+                                    {% if reply.posts.id == post.id %}
+
+                                    <a href="#" class="anchor-username ">
+                                        <h6 class="media-heading m-1 pl-2 text-white">
+                                            {% for usr in users %}
+                                              {% if reply.user_id == usr.id%}
+                                              {{usr.name}}
+                                              {% endif %}
+                                            {% endfor %}
+                                            
+                                        </h6>
+                                    </a>
+
+                                </div>
+                                <small class="time_date ml-3 mt-0">Posted
+                                    on: {{reply.replied_on.strftime("%Y-%m-%d %H:%M:%S")}}</small>
+
+
+                                <p class=" text-md-left ml-2 text-dark">{{reply.reply}}
+                                </p>
+                                <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1"></div>
+                                    <a class="allbtn deletecmt dropdown-item  col-1 "
+                                        id="delete" cmt_id = "{{reply.id}}"><i
+                                            class="fa fa-trash pl-2 text-danger"></i></a>
+                                   
+                                </div>
+
+                                {% endif %}
+                            </div>
+                            
+                            {% endfor%}
+                        </section>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+         {% endfor %}    
+{% endblock main%}

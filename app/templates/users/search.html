@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Search friends
+{% endblock title %}
+
+{% block main %}
+
+<form method ="POST" action="/search" style="justify-content: center; margin:0 20px;">
+    <div class="input-group mb-2">
+    <input type="text" name="search" id="livesearch" class="form-control" placeholder="Search people with names"
+        aria-label="Search">
+    <button class="input-group-append btn btn-info btn-rounded" type="submit"><i
+            class="fa fa-search"></i></button>
+     </div>
+</form>
+         
+<hr class="lead">
+
+{% if search_user %}
+    {% for name in results %}
+      {% set n = name.name %}
+      {% if search_user in n %}
+      <div class="detail-wrapper m-5">
+          <ul class="list-group">
+              <li class="borderless">
+                  <div class="row ">
+                      <div class="imgwrapper ">
+                          <img class=" text-center rounded-circle profile" src="/static/images/{{name.user_profile}}"
+                              alt="Responsive image">
+                      </div>
+                      <div class="ml-3">
+                          <a href="/user/{{name.username}}">{{name.name}}</a>
+                      </div>
+                  </div>
+              </li>
+          </ul>
+      </div>
+      {% else %}
+      <div class="m-3">
+
+
+          <ul class="list-group">
+              <li class="list-group-item">No User with that name</li>
+
+          </ul>
+      </div>
+          
+      {% endif %}
+          
+    {% endfor %}  
+
+
+    {% endif %}
+
+
+
+
+
+{% endblock main %}
+
